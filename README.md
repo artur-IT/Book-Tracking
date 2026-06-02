@@ -33,7 +33,6 @@ Application for tracking reading books by user.
 1. Clone repository
 2. Run `npm install`
 3. Run `npm run dev`
-4. Open `http://localhost:5173` in your browser
 
 ---
 

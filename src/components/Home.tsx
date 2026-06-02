@@ -39,17 +39,19 @@ export default function Home() {
               <button onClick={handleLogout}>Logout</button>
             </>
           ) : (
-            <>
-              <button onClick={() => setLoginPage(!loginPage)}>Login</button>
-            </>
+            <button onClick={() => setLoginPage(!loginPage)}>Login</button>
           )}
           {loginPage && <Login setLoginPage={setLoginPage} />}
           {showBookForm && <BookForm setShowBookForm={setShowBookForm} />}
         </nav>
+
+        {/* Hero */}
         <div style={style.hero}>
           <h1>Book Tracking</h1>
           <p>Check how many books you have read</p>
         </div>
+
+        {/* MainContent */}
         <MainContent>
           {isLoggedIn ? (
             <BookList />

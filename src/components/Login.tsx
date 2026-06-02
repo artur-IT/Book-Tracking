@@ -70,7 +70,7 @@ export default function Login({
       <form style={style.modalContent} onSubmit={getLoginData}>
         <div>
           <label htmlFor='login'>Login </label>
-          <input type='text' name='login' />
+          <input type='text' name='login' placeholder='l:art p:mat' />
         </div>
         <div>
           <label htmlFor='password'>Password </label>

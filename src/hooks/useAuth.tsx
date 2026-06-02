@@ -70,7 +70,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    window.location.href = '/';
+    window.location.href = '/Book-Tracking/';
   };
 
   return (

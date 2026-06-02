@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 import BookSearch from './BookSearch';
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../database/db';
 
@@ -71,7 +71,7 @@ const style: {
   },
 };
 
-export default function BookList() {
+function BookList() {
   const [searchingWord, setSearchingWord] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const booksPerPage = 10;
@@ -170,3 +170,5 @@ export default function BookList() {
     </section>
   );
 }
+
+export default memo(BookList);

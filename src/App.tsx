@@ -9,7 +9,7 @@ function App() {
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            <Route path='/' element={<Home />} />
+            <Route path='/Book-Tracking/' element={<Home />} />
           </Routes>
         </AuthProvider>
       </BrowserRouter>

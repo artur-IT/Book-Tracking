@@ -84,8 +84,8 @@ function BookList() {
     );
   }, [searchingWord]);
 
-  const totalBooks = booksDixie?.length ?? 0;
-  const totalPages = Math.max(1, Math.ceil(totalBooks / booksPerPage));
+  const totalBooks = booksDixie?.length ?? '...';
+  const totalPages = Math.max(1, Math.ceil(Number(totalBooks) / booksPerPage));
   const startIndex = (currentPage - 1) * booksPerPage;
   const endIndex = startIndex + booksPerPage;
   const currentBooks = booksDixie?.slice(startIndex, endIndex) ?? [];
@@ -115,8 +115,11 @@ function BookList() {
       </div>
 
       <ul style={style.list}>
-        {/* {books.length > 0 && <li>No books in database</li>} */}
-        {!booksDixie && <li>Loading...</li>}
+        {!booksDixie && (
+          <li style={{ marginTop: '20px' }}>
+            Wait, I'm reading 📖 your books...
+          </li>
+        )}
         {booksDixie && currentBooks.length === 0 && <li>No books found.</li>}
 
         {currentBooks.map((book) => (
@@ -130,42 +133,30 @@ function BookList() {
         ))}
       </ul>
 
-      {totalBooks > 0 && (
-        <div style={style.pagination}>
+      {Number(totalBooks) > 0 && (
+        <>
           <p>
             Page {currentPage} of {totalPages}
           </p>
-          <button
-            style={style.pageButton}
-            onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-            disabled={currentPage === 1}
-          >
-            Prev
-          </button>
-          {Array.from({ length: totalPages }, (_, index) => {
-            const pageNumber = index + 1;
-            const isActive = pageNumber === currentPage;
-            return (
-              <button
-                key={pageNumber}
-                style={isActive ? style.activePageButton : style.pageButton}
-                onClick={() => setCurrentPage(pageNumber)}
-                disabled={isActive}
-              >
-                {pageNumber}
-              </button>
-            );
-          })}
-          <button
-            style={style.pageButton}
-            onClick={() =>
-              setCurrentPage((prev) => Math.min(totalPages, prev + 1))
-            }
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </button>
-        </div>
+          <div style={style.pagination}>
+            <button
+              style={style.pageButton}
+              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+              disabled={currentPage === 1}
+            >
+              Prev
+            </button>
+            <button
+              style={style.pageButton}
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+              }
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </button>
+          </div>
+        </>
       )}
     </section>
   );

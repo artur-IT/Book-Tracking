@@ -50,9 +50,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 
   async function sampleBooksToDixie() {
     try {
-      for (const book of largeBooks.books as Book[]) {
-        await db.books.put(book);
-      }
+      await db.books.bulkPut(largeBooks.books);
     } catch (error) {
       console.error(error);
     }
@@ -73,8 +71,8 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 
   const handleLogout = async () => {
     setIsLoggedIn(false);
-    await db.books.clear();
     window.location.href = '/Book-Tracking/';
+    db.books.clear();
   };
 
   return (

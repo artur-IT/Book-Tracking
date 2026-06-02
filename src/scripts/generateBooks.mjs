@@ -1,7 +1,7 @@
 import { writeFileSync } from 'fs';
 
 const books = [];
-for (let i = 0; i < 50000; i++) {
+for (let i = 0; i < 100000; i++) {
   books.push({
     id: Math.floor(Math.random() * 1_000_000_000_000),
     title: `Book ${i}`,

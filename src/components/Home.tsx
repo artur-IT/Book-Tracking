@@ -26,6 +26,7 @@ export default function Home() {
   const { isLoggedIn, handleLogout } = useAuth();
   const [showBookForm, setShowBookForm] = useState(false);
   const [loginPage, setLoginPage] = useState(false);
+
   return (
     <>
       <main id='center'>

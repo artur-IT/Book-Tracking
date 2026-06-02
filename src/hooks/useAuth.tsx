@@ -5,7 +5,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import sampleBooks from '../sampleBooks.json';
+import sampleBooks from '../database/sampleBooks.json';
 import { db } from '../database/db';
 
 export interface Book {
@@ -41,6 +41,24 @@ const user = {
   password: 'mat',
 };
 
+//--------------------------------
+const millionBooks: Book[] = [];
+
+const generateBooks = () => {
+  for (let i = 0; i < 10000; i++) {
+    millionBooks.push({
+      id: Math.floor(Math.random() * 1000000000000),
+      title: `Book ${i}`,
+      author: `Author ${i}`,
+      isbn: Math.floor(Math.random() * 1000000000000),
+      pages: Math.floor(Math.random() * 1000),
+      rating: Math.floor(Math.random() * 5),
+    });
+  }
+};
+generateBooks();
+// ---------------------------
+
 export default function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [books, setBooks] = useState(sampleBooks.books);
@@ -48,7 +66,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   async function sampleBooksToDixie() {
     await db.books.clear();
     try {
-      for (const book of sampleBooks.books) {
+      for (const book of millionBooks) {
         await db.books.put(book);
       }
     } catch (error) {

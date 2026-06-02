@@ -24,14 +24,18 @@ const style: {
   },
 };
 
-export default function BookSearch({ setSearchingWord }) {
+export default function BookSearch({
+  setSearchingWord,
+}: {
+  setSearchingWord: (word: string) => void;
+}) {
   const inputRef = useRef<HTMLInputElement>(null);
   const handleSearch = (word: string) => {
     return setSearchingWord(word);
   };
   const clearSearch = () => {
-    inputRef.current.value = '';
-    inputRef.current.focus();
+    inputRef.current!.value = '';
+    inputRef.current!.focus();
     setSearchingWord('');
   };
 

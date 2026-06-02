@@ -62,12 +62,16 @@ const style: {
   },
 };
 
-export default function BookForm({ setShowBookForm }) {
+export default function BookForm({
+  setShowBookForm,
+}: {
+  setShowBookForm: (show: boolean) => void;
+}) {
   const { books, setBooks } = useAuth();
 
-  async function handleAddBook(e) {
+  async function handleAddBook(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const formData = new FormData(e.target);
+    const formData = new FormData(e.target as HTMLFormElement);
     const id = Date.now();
     const title = formData.get('title') as string;
     const author = formData.get('author') as string;

@@ -28,13 +28,17 @@ const style: {
   },
 };
 
-export default function Login({ setLoginPage }) {
+export default function Login({
+  setLoginPage,
+}: {
+  setLoginPage: (show: boolean) => void;
+}) {
   const { handleLogin } = useAuth();
   const [error, setError] = useState({ login: '', password: '' });
 
-  const getLoginData = (e) => {
+  const getLoginData = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
+    const formData = new FormData(e.target as HTMLFormElement);
     const login = formData.get('login') as string;
     const password = formData.get('password') as string;
     if (!validateLoginData(login, password)) {

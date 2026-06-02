@@ -8,12 +8,17 @@ import Login from './Login';
 
 const style: {
   hero: CSSProperties;
+  footer: CSSProperties;
 } = {
   hero: {
     margin: '0 auto',
     padding: '20px 30px',
     backgroundColor: '#ddd',
     borderRadius: '15px',
+  },
+  footer: {
+    padding: '20px 0px',
+    fontSize: '12px',
   },
 };
 
@@ -54,8 +59,8 @@ export default function Home() {
         </MainContent>
       </main>
 
-      <footer className='footer'>
-        <p>Copyright 2026 Book Tracking</p>
+      <footer style={style.footer}>
+        <p>Copyright 2026 - Book Tracking</p>
       </footer>
     </>
   );

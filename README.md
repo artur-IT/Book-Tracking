@@ -40,6 +40,7 @@ Application for tracking reading books by user.
 #### I'm Junior with no experience in first programming job, so I focused on time and I didn't have much time for all features:
 
 - Better styling UI
+- Optimize render components (10 mln records in database)
 - Git: comments, branches, Pull Request descriptions, refactoring (not included in this project)
 - Testing in Firefox, Edge (only Chrome is tested)
 - Testing (Vitest, React Testing Library - only basic)

@@ -27,6 +27,7 @@ Application for tracking reading books by user.
 - User:
   - Login
   - Logout
+  - loading 200 000 books from Dexie database
 
 ### How to run project:
 

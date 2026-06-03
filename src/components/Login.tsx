@@ -78,7 +78,6 @@ export default function Login({
         </div>
         {error.login && <p style={style.error}>{error.login}</p>}{' '}
         {error.password && <p style={style.error}>{error.password}</p>}
-        <p style={{ color: 'blue', fontSize: '12px' }}>(Be patient!)</p>
         <button type='submit' value='confirm'>
           Login
         </button>

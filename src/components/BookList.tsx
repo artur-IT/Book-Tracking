@@ -1,8 +1,9 @@
 import type { CSSProperties } from 'react';
 import BookSearch from './BookSearch';
-import { memo, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../database/db';
+import { useAuth } from '../hooks/useAuth';
 
 const style: {
   container: CSSProperties;
@@ -68,27 +69,34 @@ const style: {
     textAlign: 'center',
     marginTop: '12px',
     color: '#333',
+    fontSize: '16px',
   },
 };
 
 function BookList() {
   const [searchingWord, setSearchingWord] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const booksPerPage = 10;
+  const { importProgress } = useAuth();
+  const booksPerPage = 8;
 
-  const booksDixie = useLiveQuery(async () => {
-    const all = await db.books.toArray();
-    if (!searchingWord) return all;
-    return all.filter((book) =>
-      book.title.toLowerCase().includes(searchingWord.toLowerCase()),
+  const booksDexie = useLiveQuery(async () => {
+    const all = await db.books.orderBy('createdAt').reverse().toArray();
+
+    const query = searchingWord.trim().toLowerCase();
+    if (!query) return all;
+
+    return all.filter(
+      (book) =>
+        book.author.toLowerCase().includes(query) ||
+        book.title.toLowerCase().includes(query),
     );
   }, [searchingWord]);
 
-  const totalBooks = booksDixie?.length ?? '...';
+  const totalBooks = booksDexie?.length ?? '...';
   const totalPages = Math.max(1, Math.ceil(Number(totalBooks) / booksPerPage));
   const startIndex = (currentPage - 1) * booksPerPage;
   const endIndex = startIndex + booksPerPage;
-  const currentBooks = booksDixie?.slice(startIndex, endIndex) ?? [];
+  const currentBooks = booksDexie?.slice(startIndex, endIndex) ?? [];
 
   // Reset to first page after search phrase changes
   useEffect(() => {
@@ -96,6 +104,7 @@ function BookList() {
       setCurrentPage(1);
     }, 0);
   }, [searchingWord]);
+
   // Safety: if data shrinks, keep page in valid range
   useEffect(() => {
     if (currentPage > totalPages) {
@@ -111,16 +120,25 @@ function BookList() {
       <BookSearch setSearchingWord={setSearchingWord} />
 
       <div style={style.info}>
-        <p>Total books: {totalBooks}</p>
+        {searchingWord ? (
+          <p>Found {totalBooks.toLocaleString('pl-PL')} books</p>
+        ) : !importProgress?.isImporting ? (
+          <p>You have {totalBooks.toLocaleString('pl-PL')} books</p>
+        ) : (
+          <p>
+            Imported {importProgress?.imported.toLocaleString('pl-PL')} of{' '}
+            {importProgress?.total.toLocaleString('pl-PL')} books
+          </p>
+        )}
       </div>
 
       <ul style={style.list}>
-        {!booksDixie && (
+        {!booksDexie && (
           <li style={{ marginTop: '20px' }}>
             Wait, I'm reading 📖 your books...
           </li>
         )}
-        {booksDixie && currentBooks.length === 0 && <li>No books found.</li>}
+        {booksDexie && currentBooks.length === 0 && <li>No books found.</li>}
 
         {currentBooks.map((book) => (
           <li key={book.id} style={style.book}>
@@ -136,7 +154,7 @@ function BookList() {
       {Number(totalBooks) > 0 && (
         <>
           <p>
-            Page {currentPage} of {totalPages}
+            Page {currentPage} of {totalPages.toLocaleString('pl-PL')}
           </p>
           <div style={style.pagination}>
             <button
@@ -162,4 +180,4 @@ function BookList() {
   );
 }
 
-export default memo(BookList);
+export default BookList;

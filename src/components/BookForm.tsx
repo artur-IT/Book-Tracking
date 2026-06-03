@@ -87,12 +87,21 @@ export default function BookForm({
         isbn,
         pages,
         rating,
+        createdAt: new Date().toISOString(),
       });
     } catch (error) {
       console.error(error);
     }
 
-    const newBook: Book = { id, title, author, isbn, pages, rating };
+    const newBook: Book = {
+      id,
+      title,
+      author,
+      isbn,
+      pages,
+      rating,
+      createdAt: new Date().toISOString(),
+    };
     setBooks([...books, newBook]);
     setShowBookForm(false);
   }

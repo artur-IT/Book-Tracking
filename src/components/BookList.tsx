@@ -121,15 +121,15 @@ function BookList() {
       <BookSearch setSearchingWord={setSearchingWord} />
 
       <div style={style.info}>
-        {searchingWord ? (
-          <p>Found {totalBooks.toLocaleString('pl-PL')} books</p>
-        ) : !importProgress?.isImporting ? (
-          <p>You have {totalBooks.toLocaleString('pl-PL')} books</p>
-        ) : (
+        {importProgress?.isImporting ? (
           <p>
             Loading {importProgress?.imported.toLocaleString('pl-PL')} of{' '}
             {importProgress?.total.toLocaleString('pl-PL')} books
           </p>
+        ) : searchingWord ? (
+          <p>Found {totalBooks.toLocaleString('pl-PL')} books</p>
+        ) : (
+          <p>You have {totalBooks.toLocaleString('pl-PL')} books</p>
         )}
       </div>
 

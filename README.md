@@ -1,6 +1,7 @@
 # Book Tracking
 
 Recruitment project.
+
 Application for tracking reading books by user.
 
 ### Tech stack:
@@ -27,6 +28,7 @@ Application for tracking reading books by user.
 - User:
   - Login
   - Logout
+  - loading 200 000 books from Dexie database
 
 ### How to run project:
 

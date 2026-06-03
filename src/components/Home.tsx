@@ -26,13 +26,14 @@ export default function Home() {
   const { isLoggedIn, handleLogout } = useAuth();
   const [showBookForm, setShowBookForm] = useState(false);
   const [loginPage, setLoginPage] = useState(false);
+
   return (
     <>
       <main id='center'>
         <nav>
           {isLoggedIn ? (
             <>
-              <span>My Books </span>
+              <span style={{ marginRight: '10px' }}>My Books </span>
               <button onClick={() => setShowBookForm(!showBookForm)}>
                 Add
               </button>
@@ -46,10 +47,10 @@ export default function Home() {
         </nav>
 
         {/* Hero */}
-        <div style={style.hero}>
+        <header style={style.hero}>
           <h1>Book Tracking</h1>
           <p>Check how many books you have read</p>
-        </div>
+        </header>
 
         {/* MainContent */}
         <MainContent>

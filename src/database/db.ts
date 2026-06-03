@@ -7,6 +7,7 @@ interface Book {
   isbn: number;
   pages: number;
   rating: number;
+  createdAt: string;
 }
 
 const db = new Dexie('Books') as Dexie & {
@@ -14,7 +15,7 @@ const db = new Dexie('Books') as Dexie & {
 };
 
 db.version(1).stores({
-  books: '++id, title, author, isbn, pages, rating',
+  books: '++id, title, author, isbn, pages, rating, createdAt',
 });
 
 export type { Book };

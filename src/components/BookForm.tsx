@@ -1,5 +1,4 @@
 import type { CSSProperties } from 'react';
-import { useAuth, type Book } from '../hooks/useAuth';
 import { db } from '../database/db';
 
 const style: {
@@ -67,8 +66,6 @@ export default function BookForm({
 }: {
   setShowBookForm: (show: boolean) => void;
 }) {
-  const { books, setBooks } = useAuth();
-
   async function handleAddBook(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
@@ -87,13 +84,12 @@ export default function BookForm({
         isbn,
         pages,
         rating,
+        createdAt: new Date().toISOString(),
       });
     } catch (error) {
       console.error(error);
     }
 
-    const newBook: Book = { id, title, author, isbn, pages, rating };
-    setBooks([...books, newBook]);
     setShowBookForm(false);
   }
   return (

@@ -5,7 +5,9 @@ import { useAuth } from '../hooks/useAuth';
 const style: {
   container: CSSProperties;
   modalContent: CSSProperties;
+  formField: CSSProperties;
   error: CSSProperties;
+  formButtons: CSSProperties;
 } = {
   container: {
     position: 'fixed',
@@ -17,10 +19,23 @@ const style: {
     zIndex: 1000,
   },
   modalContent: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
     background: 'yellow',
-    padding: '1.5rem',
+    padding: '1.2rem',
     borderRadius: '8px',
-    width: '300px',
+    width: '200px',
+  },
+  formField: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+  formButtons: {
+    marginTop: '10px',
+    display: 'flex',
+    justifyContent: 'center',
   },
   error: {
     color: 'red',
@@ -68,22 +83,24 @@ export default function Login({
   return (
     <section style={style.container}>
       <form style={style.modalContent} onSubmit={getLoginData}>
-        <div>
+        <div style={style.formField}>
           <label htmlFor='login'>Login </label>
           <input type='text' name='login' placeholder='l:art p:mat' />
         </div>
-        <div>
+        <div style={style.formField}>
           <label htmlFor='password'>Password </label>
           <input type='password' name='password' />
         </div>
         {error.login && <p style={style.error}>{error.login}</p>}{' '}
         {error.password && <p style={style.error}>{error.password}</p>}
-        <button type='submit' value='confirm'>
-          Login
-        </button>
-        <button type='button' onClick={() => setLoginPage(false)}>
-          Cancel
-        </button>
+        <div style={style.formButtons}>
+          <button type='submit' value='confirm'>
+            Login
+          </button>
+          <button type='button' onClick={() => setLoginPage(false)}>
+            Cancel
+          </button>
+        </div>
       </form>
     </section>
   );

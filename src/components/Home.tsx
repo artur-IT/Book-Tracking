@@ -33,7 +33,7 @@ export default function Home() {
         <nav>
           {isLoggedIn ? (
             <>
-              <span>My Books </span>
+              <span style={{ marginRight: '10px' }}>My Books </span>
               <button onClick={() => setShowBookForm(!showBookForm)}>
                 Add
               </button>

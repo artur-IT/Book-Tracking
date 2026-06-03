@@ -49,9 +49,10 @@ const style: {
     alignItems: 'center',
     gap: '6px',
     flexWrap: 'wrap',
-    marginTop: '16px',
+    marginTop: '10px',
   },
   pageButton: {
+    margin: 0,
     padding: '6px 10px',
     border: '1px solid #666',
     background: '#fff',
@@ -126,7 +127,7 @@ function BookList() {
           <p>You have {totalBooks.toLocaleString('pl-PL')} books</p>
         ) : (
           <p>
-            Imported {importProgress?.imported.toLocaleString('pl-PL')} of{' '}
+            Loading {importProgress?.imported.toLocaleString('pl-PL')} of{' '}
             {importProgress?.total.toLocaleString('pl-PL')} books
           </p>
         )}
@@ -157,6 +158,9 @@ function BookList() {
             Page {currentPage} of {totalPages.toLocaleString('pl-PL')}
           </p>
           <div style={style.pagination}>
+            <button style={style.pageButton} onClick={() => setCurrentPage(1)}>
+              First
+            </button>
             <button
               style={style.pageButton}
               onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
@@ -172,6 +176,12 @@ function BookList() {
               disabled={currentPage === totalPages}
             >
               Next
+            </button>
+            <button
+              style={style.pageButton}
+              onClick={() => setCurrentPage(totalPages)}
+            >
+              Last
             </button>
           </div>
         </>

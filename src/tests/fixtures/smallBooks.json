@@ -1,0 +1,13 @@
+{
+  "books": [
+    {
+      "id": 1,
+      "title": "Test Book",
+      "author": "Test Author",
+      "isbn": 1234567890,
+      "pages": 100,
+      "rating": 5,
+      "createdAt": "2020-01-01"
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 # Book Tracking
 
 Recruitment project.
+
 Application for tracking reading books by user.
 
 ### Tech stack:

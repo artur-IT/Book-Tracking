@@ -134,13 +134,6 @@ function BookList() {
       </div>
 
       <ul style={style.list}>
-        {!booksDexie && (
-          <li style={{ marginTop: '20px' }}>
-            Wait, I'm reading 📖 your books...
-          </li>
-        )}
-        {booksDexie && currentBooks.length === 0 && <li>No books found.</li>}
-
         {currentBooks.map((book) => (
           <li key={book.id} style={style.book}>
             <h3>{book.title}</h3>

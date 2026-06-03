@@ -6,7 +6,6 @@ import {
   useRef,
   useEffect,
 } from 'react';
-import largeBooksJson from '../database/largeBooks.json';
 import { db } from '../database/db';
 
 export interface Book {
@@ -46,7 +45,14 @@ export function useAuth() {
 
 //------------------
 
-const largeBooks = largeBooksJson as LargeBooksData;
+let largeBooksPromise: Promise<LargeBooksData> | null = null;
+
+function loadLargeBooks(): Promise<LargeBooksData> {
+  largeBooksPromise ??= import('../database/largeBooks.json').then(
+    (module) => module.default as LargeBooksData,
+  );
+  return largeBooksPromise;
+}
 
 const user = {
   login: 'art',
@@ -63,6 +69,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   async function importBooksWithFastStart(
     onProgress: (n: number, total: number) => void,
   ) {
+    const largeBooks = await loadLargeBooks();
     const all = largeBooks.books;
     const total = all.length;
     const FIRST = 10;
@@ -87,6 +94,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   const importAbortRef = useRef({ cancelled: false });
 
   async function startBackgroundImport() {
+    const largeBooks = await loadLargeBooks();
     const count = await db.books.count();
     if (count >= largeBooks.books.length) {
       // DB already full from last session — skip

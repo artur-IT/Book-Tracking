@@ -7,6 +7,7 @@ import { useState } from 'react';
 import Login from './Login';
 
 const style: {
+  nav: CSSProperties;
   hero: CSSProperties;
   footer: CSSProperties;
 } = {
@@ -20,6 +21,10 @@ const style: {
     padding: '20px 0px',
     fontSize: '12px',
   },
+  nav: {
+    margin: '0',
+    padding: '10px 15px',
+  },
 };
 
 export default function Home() {
@@ -27,21 +32,19 @@ export default function Home() {
   const [showBookForm, setShowBookForm] = useState(false);
   const [loginPage, setLoginPage] = useState(false);
 
+  const menuAfterLogin = (
+    <>
+      <span style={{ marginRight: '10px' }}>My Books </span>
+      <button onClick={() => setShowBookForm(!showBookForm)}>Add</button>
+      <button onClick={handleLogout}>Logout</button>
+    </>
+  );
+
   return (
     <>
       <main id='center'>
-        <nav>
-          {isLoggedIn ? (
-            <>
-              <span style={{ marginRight: '10px' }}>My Books </span>
-              <button onClick={() => setShowBookForm(!showBookForm)}>
-                Add
-              </button>
-              <button onClick={handleLogout}>Logout</button>
-            </>
-          ) : (
-            <button onClick={() => setLoginPage(!loginPage)}>Login</button>
-          )}
+        <nav style={style.nav}>
+          {isLoggedIn ? menuAfterLogin : <button onClick={() => setLoginPage(!loginPage)}>Login</button>}
           {loginPage && <Login setLoginPage={setLoginPage} />}
           {showBookForm && <BookForm setShowBookForm={setShowBookForm} />}
         </nav>
@@ -53,13 +56,7 @@ export default function Home() {
         </header>
 
         {/* MainContent */}
-        <MainContent>
-          {isLoggedIn ? (
-            <BookList />
-          ) : (
-            <p>Please Login to see the list of books</p>
-          )}
-        </MainContent>
+        <MainContent>{isLoggedIn ? <BookList /> : <p>Please Login to see the list of books</p>}</MainContent>
       </main>
 
       <footer style={style.footer}>

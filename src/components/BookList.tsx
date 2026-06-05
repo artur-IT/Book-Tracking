@@ -86,11 +86,7 @@ function BookList() {
     const query = searchingWord.trim().toLowerCase();
     if (!query) return all;
 
-    return all.filter(
-      (book) =>
-        book.author.toLowerCase().includes(query) ||
-        book.title.toLowerCase().includes(query),
-    );
+    return all.filter((book) => book.author.toLowerCase().includes(query) || book.title.toLowerCase().includes(query));
   }, [searchingWord]);
 
   const totalBooks = booksDexie?.length ?? '...';
@@ -98,6 +94,26 @@ function BookList() {
   const startIndex = (currentPage - 1) * booksPerPage;
   const endIndex = startIndex + booksPerPage;
   const currentBooks = booksDexie?.slice(startIndex, endIndex) ?? [];
+
+  const infoMessage = (() => {
+    if (importProgress?.isImporting) {
+      const imported = importProgress.imported.toLocaleString('pl-PL');
+      const total = importProgress.total.toLocaleString('pl-PL');
+      return `Loading ${imported} of ${total} books`;
+    }
+
+    const formattedTotal = totalBooks.toLocaleString('pl-PL');
+
+    if (searchingWord) {
+      return `Found ${formattedTotal} books`;
+    }
+
+    if (Number(totalBooks) > 0) {
+      return `You have ${formattedTotal} books`;
+    }
+
+    return 'Wait... you have probably very big library 🏛️';
+  })();
 
   // Reset to first page after search phrase changes
   useEffect(() => {
@@ -121,16 +137,7 @@ function BookList() {
       <BookSearch setSearchingWord={setSearchingWord} />
 
       <div style={style.info}>
-        {importProgress?.isImporting ? (
-          <p>
-            Loading {importProgress?.imported.toLocaleString('pl-PL')} of{' '}
-            {importProgress?.total.toLocaleString('pl-PL')} books
-          </p>
-        ) : searchingWord ? (
-          <p>Found {totalBooks.toLocaleString('pl-PL')} books</p>
-        ) : (
-          <p>You have {totalBooks.toLocaleString('pl-PL')} books</p>
-        )}
+        <p>{infoMessage}</p>
       </div>
 
       <ul style={style.list}>
@@ -154,26 +161,13 @@ function BookList() {
             <button style={style.pageButton} onClick={() => setCurrentPage(1)}>
               First
             </button>
-            <button
-              style={style.pageButton}
-              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-              disabled={currentPage === 1}
-            >
+            <button style={style.pageButton} onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))} disabled={currentPage === 1}>
               Prev
             </button>
-            <button
-              style={style.pageButton}
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(totalPages, prev + 1))
-              }
-              disabled={currentPage === totalPages}
-            >
+            <button style={style.pageButton} onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))} disabled={currentPage === totalPages}>
               Next
             </button>
-            <button
-              style={style.pageButton}
-              onClick={() => setCurrentPage(totalPages)}
-            >
+            <button style={style.pageButton} onClick={() => setCurrentPage(totalPages)}>
               Last
             </button>
           </div>

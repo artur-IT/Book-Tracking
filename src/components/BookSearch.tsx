@@ -16,6 +16,7 @@ const style: {
     padding: '10px',
     borderRadius: '5px',
     border: '1px solid #666',
+    backgroundColor: 'aliceblue',
   },
   button: {
     padding: '10px',
@@ -24,11 +25,7 @@ const style: {
   },
 };
 
-export default function BookSearch({
-  setSearchingWord,
-}: {
-  setSearchingWord: (word: string) => void;
-}) {
+export default function BookSearch({ setSearchingWord }: { setSearchingWord: (word: string) => void }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const handleSearch = (word: string) => {
     return setSearchingWord(word);
@@ -41,14 +38,7 @@ export default function BookSearch({
 
   return (
     <section style={style.container}>
-      <input
-        ref={inputRef}
-        type='text'
-        name='search'
-        placeholder='Search by title or author'
-        style={style.input}
-        onChange={(e) => handleSearch(e.target.value)}
-      />
+      <input ref={inputRef} type='text' name='search' placeholder='Search by title or author' style={style.input} onChange={(e) => handleSearch(e.target.value)} />
       <button style={style.button} onClick={clearSearch}>
         Clear
       </button>

@@ -43,17 +43,13 @@ const style: {
   },
 };
 
-export default function Login({
-  setLoginPage,
-}: {
-  setLoginPage: (show: boolean) => void;
-}) {
+export default function Login({ setLoginPage }: { setLoginPage: (show: boolean) => void }) {
   const { handleLogin } = useAuth();
   const [error, setError] = useState({ login: '', password: '' });
 
-  const getLoginData = (e: React.FormEvent<HTMLFormElement>) => {
+  const getLoginData = (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.target as HTMLFormElement);
+    const formData = new FormData(e.target);
     const login = formData.get('login') as string;
     const password = formData.get('password') as string;
     if (!validateLoginData(login, password)) {
@@ -91,8 +87,7 @@ export default function Login({
           <label htmlFor='password'>Password </label>
           <input type='password' name='password' />
         </div>
-        {error.login && <p style={style.error}>{error.login}</p>}{' '}
-        {error.password && <p style={style.error}>{error.password}</p>}
+        {error.login && <p style={style.error}>{error.login}</p>} {error.password && <p style={style.error}>{error.password}</p>}
         <div style={style.formButtons}>
           <button type='submit' value='confirm'>
             Login

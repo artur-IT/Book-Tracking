@@ -1,11 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  type ReactNode,
-  useRef,
-  useEffect,
-} from 'react';
+import { createContext, useContext, useState, type ReactNode, useRef, useEffect } from 'react';
 import { db } from '../database/db';
 
 export interface Book {
@@ -48,9 +41,7 @@ export function useAuth() {
 let largeBooksPromise: Promise<LargeBooksData> | null = null;
 
 function loadLargeBooks(): Promise<LargeBooksData> {
-  largeBooksPromise ??= import('../database/largeBooks.json').then(
-    (module) => module.default as LargeBooksData,
-  );
+  largeBooksPromise ??= import('../database/largeBooks.json').then((module) => module.default as LargeBooksData);
   return largeBooksPromise;
 }
 
@@ -66,9 +57,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   // -= START -- load books in small packages
   const BATCH_SIZE = 5000;
 
-  async function importBooksWithFastStart(
-    onProgress: (n: number, total: number) => void,
-  ) {
+  async function importBooksWithFastStart(onProgress: (n: number, total: number) => void) {
     const largeBooks = await loadLargeBooks();
     const all = largeBooks.books;
     const total = all.length;
@@ -118,16 +107,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       setImportProgress((p) => (p ? { ...p, isImporting: false } : null));
     }
   }
-
   // -- END --
-
-  // async function sampleBooksToDexie() {
-  //   try {
-  //     await db.books.bulkPut(largeBooks.books);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // }
 
   useEffect(() => {
     void db.books.clear();

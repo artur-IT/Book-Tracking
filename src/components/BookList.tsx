@@ -95,7 +95,7 @@ function BookList() {
   const endIndex = startIndex + booksPerPage;
   const currentBooks = booksDexie?.slice(startIndex, endIndex) ?? [];
 
-  const infoMessage = (() => {
+  const infoMessage = () => {
     if (importProgress?.isImporting) {
       const imported = importProgress.imported.toLocaleString('pl-PL');
       const total = importProgress.total.toLocaleString('pl-PL');
@@ -104,31 +104,20 @@ function BookList() {
 
     const formattedTotal = totalBooks.toLocaleString('pl-PL');
 
-    if (searchingWord) {
-      return `Found ${formattedTotal} books`;
-    }
-
-    if (Number(totalBooks) > 0) {
-      return `You have ${formattedTotal} books`;
-    }
+    if (searchingWord) return `Found ${formattedTotal} books`;
+    if (Number(totalBooks) > 0) return `You have ${formattedTotal} books`;
 
     return 'Wait... you have probably very big library 🏛️';
-  })();
+  };
 
   // Reset to first page after search phrase changes
   useEffect(() => {
-    setTimeout(() => {
-      setCurrentPage(1);
-    }, 0);
+    setTimeout(() => setCurrentPage(1), 0);
   }, [searchingWord]);
 
   // Safety: if data shrinks, keep page in valid range
   useEffect(() => {
-    if (currentPage > totalPages) {
-      setTimeout(() => {
-        setCurrentPage(totalPages);
-      }, 0);
-    }
+    if (currentPage > totalPages) setTimeout(() => setCurrentPage(totalPages), 0);
   }, [currentPage, totalPages]);
 
   return (
@@ -137,7 +126,7 @@ function BookList() {
       <BookSearch setSearchingWord={setSearchingWord} />
 
       <div style={style.info}>
-        <p>{infoMessage}</p>
+        <p>{infoMessage()}</p>
       </div>
 
       <ul style={style.list}>

@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 import BookSearch from './BookSearch';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../database/db';
 import { useAuth } from '../hooks/useAuth';
@@ -95,6 +95,10 @@ function BookList() {
   const endIndex = startIndex + booksPerPage;
   const currentBooks = booksDexie?.slice(startIndex, endIndex) ?? [];
 
+  const memoBookSearch = useMemo(() => {
+    return <BookSearch setSearchingWord={setSearchingWord} />;
+  }, [setSearchingWord]);
+
   const infoMessage = () => {
     if (importProgress?.isImporting) {
       const imported = importProgress.imported.toLocaleString('pl-PL');
@@ -123,7 +127,7 @@ function BookList() {
   return (
     <section style={style.container}>
       <h2>Book List</h2>
-      <BookSearch setSearchingWord={setSearchingWord} />
+      {memoBookSearch}
 
       <div style={style.info}>
         <p>{infoMessage()}</p>

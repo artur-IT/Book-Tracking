@@ -5,15 +5,13 @@ import AuthProvider from './hooks/useAuth';
 
 function App() {
   return (
-    <>
-      <BrowserRouter>
-        <AuthProvider>
-          <Routes>
-            <Route path='/Book-Tracking/' element={<Home />} />
-          </Routes>
-        </AuthProvider>
-      </BrowserRouter>
-    </>
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          <Route path='/Book-Tracking/' element={<Home />} />
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 

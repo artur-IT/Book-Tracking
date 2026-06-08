@@ -10,8 +10,8 @@ Application for tracking reading books by user.
 - TypeScript
 - Vite
 - CSS Modules
-- Database: Dexie.js
-- Database: max. 10 mln records
+- Database: **Dexie.js**
+- Database: **200 000 records** (books)
 - useContext for authentication
 - Deploy: GitHub Pages
 
@@ -24,7 +24,7 @@ Application for tracking reading books by user.
   - Pages
   - Rating 1-5
 - View all books
-- Search book by title, author
+- **Live search** book by title or author
 - User:
   - Login
   - Logout
@@ -59,16 +59,16 @@ Realy nice idea (tracking books) project for me.
 
 - build PocketBase backend
 - build BookEdit / delete functionality
-- build tests
-- checks for 10 mln records in database
-- better styling
-- crypting data in IndexedDB?
+- build tests (**DONE**)
+- checks for 10 mln records in database (**DONE** - for 200 000 books)
+- better styling (**DONE**)
+- crypting data in IndexedDB? (**DONE** - by cleaning data in IndexedDB after each login)
 
 ### AI
 
 Only if I really needed. I used it for:
 
 - fix errors in code (useContext, Dexie.js problems, routing problems)
-- research for minimal free backend (choise: PocketBase)
-- research for minimal free local DB (choise: Dexie.js)
+- research for minimal free backend (choice: PocketBase)
+- research for minimal free local DB (choice: Dexie.js)
 - asking and explaining for proposal solutions

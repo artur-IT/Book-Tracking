@@ -81,11 +81,11 @@ export default function Login({ setLoginPage }: { setLoginPage: (show: boolean) 
       <form style={style.modalContent} onSubmit={getLoginData}>
         <div style={style.formField}>
           <label htmlFor='login'>Login </label>
-          <input type='text' name='login' placeholder='l:art p:mat' />
+          <input id='login' type='text' name='login' placeholder='l:art p:mat' />
         </div>
         <div style={style.formField}>
           <label htmlFor='password'>Password </label>
-          <input type='password' name='password' />
+          <input id='password' type='password' name='password' />
         </div>
         {error.login && <p style={style.error}>{error.login}</p>} {error.password && <p style={style.error}>{error.password}</p>}
         <div style={style.formButtons}>

@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { db } from '../database/db';
+import { useAuth } from '../hooks/useAuth';
 
 const style: {
   container: CSSProperties;
@@ -62,6 +62,7 @@ const style: {
 };
 
 export default function BookForm({ setShowBookForm }: { setShowBookForm: (show: boolean) => void }) {
+  const { db, addBookToCache } = useAuth();
   async function handleAddBook(e: React.ChangeEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
@@ -72,16 +73,19 @@ export default function BookForm({ setShowBookForm }: { setShowBookForm: (show: 
     const pages = Number(formData.get('pages')) as number;
     const rating = Number(formData.get('rating')) as number;
 
+    const newBook = {
+      id,
+      title,
+      author,
+      isbn,
+      pages,
+      rating,
+      createdAt: new Date().toISOString(),
+    };
+
     try {
-      await db.books.add({
-        id,
-        title,
-        author,
-        isbn,
-        pages,
-        rating,
-        createdAt: new Date().toISOString(),
-      });
+      await db?.table('books').add(newBook);
+      addBookToCache(newBook);
     } catch (error) {
       console.error(error);
     }
@@ -100,11 +104,11 @@ export default function BookForm({ setShowBookForm }: { setShowBookForm: (show: 
           <label htmlFor='rating'>Rating </label>
         </div>
         <div style={style.fields}>
-          <input type='text' name='title' maxLength='70' placeholder='max. 70 characters' required />
-          <input type='text' name='author' maxLength='30' placeholder='max. 30 characters' required />
-          <input type='number' name='isbn' required pattern='[0-9]{13}' min='1' max='9999999999999' placeholder='max. 13 digits' />
-          <input type='number' name='pages' min='1' max='3000' placeholder='max. 3000 pages' />
-          <input type='number' name='rating' min='1' max='5' placeholder='1 - 5' />
+          <input id='title' type='text' name='title' maxLength='70' placeholder='max. 70 characters' required />
+          <input id='author' type='text' name='author' maxLength='30' placeholder='max. 30 characters' required />
+          <input id='isbn' type='number' name='isbn' required pattern='[0-9]{13}' min='1' max='9999999999999' placeholder='max. 13 digits' />
+          <input id='pages' type='number' name='pages' min='1' max='3000' placeholder='max. 3000 pages' />
+          <input id='rating' type='number' name='rating' min='1' max='5' placeholder='1 - 5' />
         </div>
         <div>
           <button type='submit'>Add Book</button>

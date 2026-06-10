@@ -60,7 +60,7 @@ Realy nice idea (tracking books) project for me.
 - build PocketBase backend
 - build BookEdit / delete functionality
 - build tests (**DONE**)
-- checks for 10 mln records in database (**DONE** - for 200 000 books)
+- checks for 10 mln records in database (partly **DONE** - for 200 000 books)
 - better styling (**DONE**)
 - crypting data in IndexedDB? (**DONE** - selected data in InexedDB is encrypted. Decrypted on the fly after login and displayed on screen (still encrypted in InedxedDB))
 

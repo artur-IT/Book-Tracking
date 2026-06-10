@@ -1,4 +1,4 @@
-import type { Book } from '../../database/db';
+import type { Book } from '../../hooks/useAuth';
 
 export const sampleBook: Book = {
   id: 1,
@@ -9,8 +9,3 @@ export const sampleBook: Book = {
   rating: 5,
   createdAt: '2024-06-01T12:00:00.000Z',
 };
-
-export async function seedSampleBook() {
-  const { db } = await import('../../database/db');
-  await db.books.put(sampleBook);
-}

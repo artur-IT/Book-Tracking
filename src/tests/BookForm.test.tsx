@@ -1,13 +1,18 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import BookForm from '../components/BookForm';
 import userEvent from '@testing-library/user-event';
-import { waitFor } from '@testing-library/react';
+import { AuthWrapper } from './helpers/renderWithAuth';
 
 describe('BookForm component', () => {
   let setShowBookForm: (show: boolean) => void;
+
   beforeEach(() => {
     setShowBookForm = vi.fn();
-    render(<BookForm setShowBookForm={setShowBookForm} />);
+    render(
+      <AuthWrapper>
+        <BookForm setShowBookForm={setShowBookForm} />
+      </AuthWrapper>,
+    );
   });
 
   it('should display all form fields and buttons', () => {
@@ -22,7 +27,6 @@ describe('BookForm component', () => {
   });
 
   it('should change state to false when Add Book button is clicked', async () => {
-    // fill data form before clicking Add Book button
     await userEvent.type(screen.getByPlaceholderText('max. 70 characters'), 'Test Book');
     await userEvent.type(screen.getByPlaceholderText('max. 30 characters'), 'Test Author');
     await userEvent.type(screen.getByPlaceholderText('max. 13 digits'), '1234567890123');

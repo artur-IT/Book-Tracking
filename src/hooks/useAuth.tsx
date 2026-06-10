@@ -25,10 +25,12 @@ type AuthContextValue = {
   handleLogout: () => void;
   db: Dexie | null;
   booksCache: Book[];
+  addBookToCache: (book: Book) => void;
 };
 
 const UserContext = createContext<AuthContextValue | null>(null);
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
   const context = useContext(UserContext);
   if (!context) {
@@ -37,10 +39,9 @@ export function useAuth() {
   return context;
 }
 
-//------------------
-
 let largeBooksPromise: Promise<LargeBooksData> | null = null;
 
+// import 200 000 books
 function loadLargeBooks(): Promise<LargeBooksData> {
   largeBooksPromise ??= import('../database/largeBooks.json').then((module) => module.default as LargeBooksData);
   return largeBooksPromise;
@@ -56,10 +57,16 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   const [db, setDB] = useState<Dexie | null>(null);
   const [booksCache, setBooksCache] = useState<Book[]>([]);
 
+  // Books Cache for fast searching
   async function loadBooksIntoCache(db: Dexie) {
     const all = await db.table('books').orderBy('createdAt').reverse().toArray();
     setBooksCache(all);
     return all;
+  }
+
+  // Add book to cache after adding to database
+  function addBookToCache(book: Book) {
+    setBooksCache((prev) => [book, ...prev]);
   }
 
   const handleLogin = async (login: string, password: string) => {
@@ -84,6 +91,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   // -= START -- load books in small packages
   const BATCH_SIZE = 5000;
 
+  // show first 10 books to user, then wait for loading all books
   async function importBooksWithFastStart(db: Dexie, onProgress: (n: number, total: number) => void) {
     const largeBooks = await loadLargeBooks();
     const all = largeBooks.books;
@@ -100,7 +108,9 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       await new Promise((r) => setTimeout(r, 0));
     }
   }
+  // -- END --
 
+  // for showing loading progres to user
   const [importProgress, setImportProgress] = useState<{
     imported: number;
     total: number;
@@ -127,6 +137,10 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await importBooksWithFastStart(db, (imported, total) => {
         setImportProgress({ imported, total, isImporting: imported < total });
+
+        if (imported === 10) {
+          void loadBooksIntoCache(db);
+        }
       });
       await loadBooksIntoCache(db);
     } catch (e) {
@@ -135,7 +149,6 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       setImportProgress((p) => (p ? { ...p, isImporting: false } : null));
     }
   }
-  // -- END --
 
   return (
     <UserContext.Provider
@@ -146,6 +159,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         handleLogout,
         db,
         booksCache,
+        addBookToCache,
       }}
     >
       {children}

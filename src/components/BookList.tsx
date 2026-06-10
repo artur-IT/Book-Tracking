@@ -146,7 +146,7 @@ function BookList() {
             Page {currentPage} of {totalPages.toLocaleString('pl-PL')}
           </p>
           <div style={style.pagination}>
-            <button style={style.pageButton} onClick={() => setCurrentPage(1)}>
+            <button style={{ ...style.pageButton, visibility: currentPage === 1 ? 'hidden' : 'visible' }} onClick={() => setCurrentPage(1)}>
               First
             </button>
             <button style={style.pageButton} onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))} disabled={currentPage === 1}>
@@ -155,7 +155,7 @@ function BookList() {
             <button style={style.pageButton} onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))} disabled={currentPage === totalPages}>
               Next
             </button>
-            <button style={style.pageButton} onClick={() => setCurrentPage(totalPages)}>
+            <button style={{ ...style.pageButton, visibility: currentPage === totalPages ? 'hidden' : 'visible' }} onClick={() => setCurrentPage(totalPages)}>
               Last
             </button>
           </div>

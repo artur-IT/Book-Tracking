@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { db } from '../database/db';
+import { useAuth } from '../hooks/useAuth';
 
 const style: {
   container: CSSProperties;
@@ -62,6 +62,7 @@ const style: {
 };
 
 export default function BookForm({ setShowBookForm }: { setShowBookForm: (show: boolean) => void }) {
+  const { db } = useAuth();
   async function handleAddBook(e: React.ChangeEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
@@ -73,7 +74,7 @@ export default function BookForm({ setShowBookForm }: { setShowBookForm: (show: 
     const rating = Number(formData.get('rating')) as number;
 
     try {
-      await db.books.add({
+      await db?.table('books').add({
         id,
         title,
         author,

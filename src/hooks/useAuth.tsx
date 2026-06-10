@@ -1,5 +1,6 @@
-import { createContext, useContext, useState, type ReactNode, useRef, useEffect } from 'react';
-import { db } from '../database/db';
+import { createContext, useContext, useState, type ReactNode, useRef } from 'react';
+import initializeEncryptedDatabase from '../database/db';
+import type { Dexie } from 'dexie';
 
 export interface Book {
   id: number;
@@ -20,10 +21,10 @@ type AuthContextValue = {
     total: number;
     isImporting: boolean;
   } | null;
-  handleLogin: (login: string, password: string) => boolean;
+  handleLogin: (login: string, password: string) => Promise<boolean>;
   handleLogout: () => void;
-  books: Book[];
-  setBooks: (books: Book[]) => void;
+  db: Dexie | null;
+  booksCache: Book[];
 };
 
 const UserContext = createContext<AuthContextValue | null>(null);
@@ -52,23 +53,49 @@ const user = {
 
 export default function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [books, setBooks] = useState<Book[]>([]);
+  const [db, setDB] = useState<Dexie | null>(null);
+  const [booksCache, setBooksCache] = useState<Book[]>([]);
+
+  async function loadBooksIntoCache(db: Dexie) {
+    const all = await db.table('books').orderBy('createdAt').reverse().toArray();
+    setBooksCache(all);
+    return all;
+  }
+
+  const handleLogin = async (login: string, password: string) => {
+    if (login === user.login && password === user.password) {
+      const db = await initializeEncryptedDatabase(password);
+      setDB(db);
+      await loadBooksIntoCache(db);
+      setIsLoggedIn(true);
+      await startBackgroundImport(db);
+      return true;
+    }
+    return false;
+  };
+
+  const handleLogout = async () => {
+    setIsLoggedIn(false);
+    setImportProgress(null);
+    setBooksCache([]);
+    await db?.table('books').clear();
+  };
 
   // -= START -- load books in small packages
   const BATCH_SIZE = 5000;
 
-  async function importBooksWithFastStart(onProgress: (n: number, total: number) => void) {
+  async function importBooksWithFastStart(db: Dexie, onProgress: (n: number, total: number) => void) {
     const largeBooks = await loadLargeBooks();
     const all = largeBooks.books;
     const total = all.length;
     const FIRST = 10;
 
-    await db.books.bulkPut(all.slice(0, FIRST));
+    await db.table('books').bulkPut(all.slice(0, FIRST));
     onProgress(FIRST, total);
 
     for (let i = FIRST; i < total; i += BATCH_SIZE) {
       const chunk = all.slice(i, i + BATCH_SIZE);
-      await db.books.bulkPut(chunk);
+      await db?.table('books').bulkPut(chunk);
       onProgress(Math.min(i + chunk.length, total), total);
       await new Promise((r) => setTimeout(r, 0));
     }
@@ -82,25 +109,26 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 
   const importAbortRef = useRef({ cancelled: false });
 
-  async function startBackgroundImport() {
+  async function startBackgroundImport(db: Dexie) {
     const largeBooks = await loadLargeBooks();
-    const count = await db.books.count();
-    if (count >= largeBooks.books.length) {
+    const count = await db.table('books').count();
+    if (count && count >= largeBooks.books.length) {
       // DB already full from last session — skip
       return;
     }
 
     importAbortRef.current.cancelled = false;
     setImportProgress({
-      imported: count,
+      imported: count ?? 0,
       total: largeBooks.books.length,
       isImporting: true,
     });
 
     try {
-      await importBooksWithFastStart((imported, total) => {
+      await importBooksWithFastStart(db, (imported, total) => {
         setImportProgress({ imported, total, isImporting: imported < total });
       });
+      await loadBooksIntoCache(db);
     } catch (e) {
       console.error(e);
     } finally {
@@ -109,25 +137,6 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   }
   // -- END --
 
-  useEffect(() => {
-    void db.books.clear();
-  }, []);
-
-  const handleLogin = (login: string, password: string) => {
-    if (login === user.login && password === user.password) {
-      setIsLoggedIn(true);
-      startBackgroundImport();
-      return true;
-    }
-    return false;
-  };
-
-  const handleLogout = async () => {
-    setIsLoggedIn(false);
-    setImportProgress(null);
-    await db.books.clear();
-  };
-
   return (
     <UserContext.Provider
       value={{
@@ -135,8 +144,8 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         importProgress,
         handleLogin,
         handleLogout,
-        books,
-        setBooks,
+        db,
+        booksCache,
       }}
     >
       {children}

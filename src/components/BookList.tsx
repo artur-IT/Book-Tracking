@@ -1,8 +1,6 @@
 import type { CSSProperties } from 'react';
 import BookSearch from './BookSearch';
 import { useEffect, useMemo, useState } from 'react';
-import { useLiveQuery } from 'dexie-react-hooks';
-import { db } from '../database/db';
 import { useAuth } from '../hooks/useAuth';
 
 const style: {
@@ -77,23 +75,20 @@ const style: {
 function BookList() {
   const [searchingWord, setSearchingWord] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const { importProgress } = useAuth();
+  const { importProgress, booksCache } = useAuth();
   const booksPerPage = 8;
 
-  const booksDexie = useLiveQuery(async () => {
-    const all = await db.books.orderBy('createdAt').reverse().toArray();
-
+  const filteredBooks = useMemo(() => {
     const query = searchingWord.trim().toLowerCase();
-    if (!query) return all;
+    if (!query) return booksCache;
+    return booksCache.filter((book) => book.title.toLowerCase().includes(query) || book.author.toLowerCase().includes(query));
+  }, [booksCache, searchingWord]);
 
-    return all.filter((book) => book.author.toLowerCase().includes(query) || book.title.toLowerCase().includes(query));
-  }, [searchingWord]);
-
-  const totalBooks = booksDexie?.length ?? '...';
+  const totalBooks = filteredBooks?.length ?? '...';
   const totalPages = Math.max(1, Math.ceil(Number(totalBooks) / booksPerPage));
   const startIndex = (currentPage - 1) * booksPerPage;
   const endIndex = startIndex + booksPerPage;
-  const currentBooks = booksDexie?.slice(startIndex, endIndex) ?? [];
+  const currentBooks = filteredBooks?.slice(startIndex, endIndex) ?? [];
 
   const memoBookSearch = useMemo(() => {
     return <BookSearch setSearchingWord={setSearchingWord} />;

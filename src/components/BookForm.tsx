@@ -61,8 +61,9 @@ const style: {
   },
 };
 
-export default function BookForm({ setShowBookForm }: { setShowBookForm: (show: boolean) => void }) {
-  const { db, addBookToCache } = useAuth();
+export default function BookForm() {
+  const { db, addBookToCache, setShowBookForm } = useAuth();
+
   async function handleAddBook(e: React.ChangeEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);

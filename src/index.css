@@ -120,6 +120,25 @@ button:hover {
   color: #fff;
 }
 
+.btn_edit {
+  background-color: white;
+}
+
+.btn_edit:hover {
+  background-color: yellow;
+  color: #000;
+}
+
+.btn_delete {
+  background-color: black;
+  color: white;
+}
+
+.btn_delete:hover {
+  background-color: yellow;
+  color: #000;
+}
+
 input {
   margin: 3px 0;
   padding: 5px 10px;

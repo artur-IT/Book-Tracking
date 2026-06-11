@@ -1,10 +1,10 @@
 import MainContent from './MainContent';
 import BookList from './BookList';
 import type { CSSProperties } from 'react';
-import BookForm from './BookForm';
 import { useAuth } from '../hooks/useAuth';
 import { useState } from 'react';
 import Login from './Login';
+import BookForm from './BookForm';
 
 const style: {
   nav: CSSProperties;
@@ -28,14 +28,20 @@ const style: {
 };
 
 export default function Home() {
-  const { isLoggedIn, handleLogout } = useAuth();
-  const [showBookForm, setShowBookForm] = useState(false);
+  const { isLoggedIn, handleLogout, showBookForm, setShowBookForm, setEditMode, editMode } = useAuth();
   const [loginPage, setLoginPage] = useState(false);
+
+  const handleAdd = () => setShowBookForm(true);
 
   const menuAfterLogin = (
     <>
       <span style={{ marginRight: '10px' }}>My Books </span>
-      <button onClick={() => setShowBookForm(!showBookForm)}>Add</button>
+      <button style={{ visibility: editMode ? 'hidden' : 'visible' }} onClick={handleAdd} disabled={editMode}>
+        Add
+      </button>
+      <button style={{ backgroundColor: editMode ? 'yellow' : '' }} onClick={() => setEditMode(!editMode)}>
+        Edit
+      </button>
       <button onClick={handleLogout}>Logout</button>
     </>
   );
@@ -46,7 +52,7 @@ export default function Home() {
         <nav style={style.nav}>
           {isLoggedIn ? menuAfterLogin : <button onClick={() => setLoginPage(!loginPage)}>Login</button>}
           {loginPage && <Login setLoginPage={setLoginPage} />}
-          {showBookForm && <BookForm setShowBookForm={setShowBookForm} />}
+          {showBookForm && !editMode ? <BookForm /> : null}
         </nav>
 
         {/* Hero */}

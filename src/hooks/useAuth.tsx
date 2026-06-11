@@ -16,6 +16,8 @@ type LargeBooksData = { books: Book[] };
 
 type AuthContextValue = {
   isLoggedIn: boolean;
+  showBookForm: boolean;
+  setShowBookForm: (show: boolean) => void;
   importProgress: {
     imported: number;
     total: number;
@@ -26,6 +28,10 @@ type AuthContextValue = {
   db: Dexie | null;
   booksCache: Book[];
   addBookToCache: (book: Book) => void;
+  updateBookInCache: (book: Book) => void;
+  deleteBookFromCache: (id: number) => void;
+  editMode: boolean;
+  setEditMode: (edit: boolean) => void;
 };
 
 const UserContext = createContext<AuthContextValue | null>(null);
@@ -56,6 +62,8 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [db, setDB] = useState<Dexie | null>(null);
   const [booksCache, setBooksCache] = useState<Book[]>([]);
+  const [showBookForm, setShowBookForm] = useState(false);
+  const [editMode, setEditMode] = useState(false);
 
   // Books Cache for fast searching
   async function loadBooksIntoCache(db: Dexie) {
@@ -69,12 +77,20 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     setBooksCache((prev) => [book, ...prev]);
   }
 
+  function updateBookInCache(book: Book) {
+    setBooksCache((prev) => prev.map((b) => (b.id === book.id ? book : b)));
+  }
+
+  function deleteBookFromCache(id: number) {
+    setBooksCache((prev) => prev.filter((book) => book.id !== id));
+  }
+
   const handleLogin = async (login: string, password: string) => {
     if (login === user.login && password === user.password) {
+      setIsLoggedIn(true);
       const db = await initializeEncryptedDatabase(password);
       setDB(db);
       await loadBooksIntoCache(db);
-      setIsLoggedIn(true);
       await startBackgroundImport(db);
       return true;
     }
@@ -160,6 +176,12 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         db,
         booksCache,
         addBookToCache,
+        updateBookInCache,
+        showBookForm,
+        setShowBookForm,
+        deleteBookFromCache,
+        editMode,
+        setEditMode,
       }}
     >
       {children}

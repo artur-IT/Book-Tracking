@@ -1,18 +1,38 @@
+import { useEffect } from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
-import BookForm from '../components/BookForm';
 import userEvent from '@testing-library/user-event';
+import BookForm from '../components/BookForm';
+import { useAuth } from '../hooks/useAuth';
 import { AuthWrapper } from './helpers/renderWithAuth';
 
-describe('BookForm component', () => {
-  let setShowBookForm: (show: boolean) => void;
+function ShowBookFormFlag() {
+  const { showBookForm } = useAuth();
+  return <span data-testid="show-book-form">{String(showBookForm)}</span>;
+}
 
+function OpenBookFormOnMount() {
+  const { setShowBookForm } = useAuth();
+
+  useEffect(() => {
+    setShowBookForm(true);
+  }, [setShowBookForm]);
+
+  return null;
+}
+
+function renderBookForm() {
+  render(
+    <AuthWrapper>
+      <OpenBookFormOnMount />
+      <ShowBookFormFlag />
+      <BookForm />
+    </AuthWrapper>,
+  );
+}
+
+describe('BookForm component', () => {
   beforeEach(() => {
-    setShowBookForm = vi.fn();
-    render(
-      <AuthWrapper>
-        <BookForm setShowBookForm={setShowBookForm} />
-      </AuthWrapper>,
-    );
+    renderBookForm();
   });
 
   it('should display all form fields and buttons', () => {
@@ -27,14 +47,25 @@ describe('BookForm component', () => {
   });
 
   it('should change state to false when Add Book button is clicked', async () => {
-    await userEvent.type(screen.getByPlaceholderText('max. 70 characters'), 'Test Book');
-    await userEvent.type(screen.getByPlaceholderText('max. 30 characters'), 'Test Author');
-    await userEvent.type(screen.getByPlaceholderText('max. 13 digits'), '1234567890123');
-    await userEvent.type(screen.getByPlaceholderText('max. 3000 pages'), '100');
-    await userEvent.type(screen.getByPlaceholderText('1 - 5'), '5');
-    await userEvent.click(screen.getByRole('button', { name: 'Add Book' }));
+    const user = userEvent.setup();
+
+    await user.type(screen.getByPlaceholderText('max. 70 characters'), 'Test Book');
+    await user.type(screen.getByPlaceholderText('max. 30 characters'), 'Test Author');
+    await user.type(screen.getByPlaceholderText('max. 13 digits'), '1234567890123');
+    await user.type(screen.getByPlaceholderText('max. 3000 pages'), '100');
+    await user.type(screen.getByPlaceholderText('1 - 5'), '5');
+    await user.click(screen.getByRole('button', { name: 'Add Book' }));
+
     await waitFor(() => {
-      expect(setShowBookForm).toHaveBeenCalledWith(false);
+      expect(screen.getByTestId('show-book-form').textContent).toBe('false');
     });
+  });
+
+  it('should change state to false when Cancel button is clicked', async () => {
+    const user = userEvent.setup();
+
+    await user.click(screen.getByRole('button', { name: 'Cancel' }));
+
+    expect(screen.getByTestId('show-book-form').textContent).toBe('false');
   });
 });

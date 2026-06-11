@@ -1,13 +1,13 @@
 import type { CSSProperties } from 'react';
 import BookSearch from './BookSearch';
 import { useEffect, useMemo, useState } from 'react';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth, type Book } from '../hooks/useAuth';
+import BookCard from './BookCard';
+import BookFormEdit from './BookFormEdit';
 
 const style: {
   container: CSSProperties;
   list: CSSProperties;
-  book: CSSProperties;
-  isbn: CSSProperties;
   pagination: CSSProperties;
   pageButton: CSSProperties;
   activePageButton: CSSProperties;
@@ -24,22 +24,6 @@ const style: {
     listStyle: 'none',
     textAlign: 'left',
     padding: '0',
-  },
-  book: {
-    width: '200px',
-    height: '250px',
-    border: '1px solid #666',
-    padding: '10px',
-    boxShadow: '6px 6px 2px 0 rgba(0, 0, 0, 0.7)',
-    backgroundColor: '#eee',
-    color: '#333',
-    fontSize: '14px',
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  isbn: {
-    fontSize: '12px',
-    color: '#666',
   },
   pagination: {
     display: 'flex',
@@ -75,6 +59,8 @@ const style: {
 function BookList() {
   const [searchingWord, setSearchingWord] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [editingBook, setEditingBook] = useState<Book | null>(null);
+
   const { importProgress, booksCache } = useAuth();
   const booksPerPage = 8;
 
@@ -128,15 +114,11 @@ function BookList() {
         <p>{infoMessage()}</p>
       </div>
 
+      {editingBook && <BookFormEdit book={editingBook} onClose={() => setEditingBook(null)} />}
+
       <ul style={style.list}>
         {currentBooks.map((book) => (
-          <li key={book.id} style={style.book}>
-            <h3>{book.title}</h3>
-            <p>{book.author}</p>
-            <p style={style.isbn}>ISBN: {book.isbn}</p>
-            <p>Pages: {book.pages}</p>
-            <p>Rating: {book.rating}</p>
-          </li>
+          <BookCard key={book.id} book={book} onEdit={setEditingBook} />
         ))}
       </ul>
 

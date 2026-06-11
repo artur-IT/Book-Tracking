@@ -62,12 +62,8 @@ export default function Login({ setLoginPage }: { setLoginPage: (show: boolean) 
 
   const validateLoginData = (login: string, password: string) => {
     const newError = { login: '', password: '' };
-    if (login === '') {
-      newError.login = 'Login is required';
-    }
-    if (password === '') {
-      newError.password = 'Password is required';
-    }
+    if (login === '') newError.login = 'Login is required';
+    if (password === '') newError.password = 'Password is required';
 
     if (newError.login !== '' || newError.password !== '') {
       setError(newError);
@@ -87,7 +83,8 @@ export default function Login({ setLoginPage }: { setLoginPage: (show: boolean) 
           <label htmlFor='password'>Password </label>
           <input id='password' type='password' name='password' />
         </div>
-        {error.login && <p style={style.error}>{error.login}</p>} {error.password && <p style={style.error}>{error.password}</p>}
+        {error.login && <p style={style.error}>{error.login}</p>}
+        {error.password && <p style={style.error}>{error.password}</p>}
         <div style={style.formButtons}>
           <button type='submit' value='confirm'>
             Login

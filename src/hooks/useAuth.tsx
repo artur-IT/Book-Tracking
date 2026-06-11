@@ -87,10 +87,10 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 
   const handleLogin = async (login: string, password: string) => {
     if (login === user.login && password === user.password) {
+      setIsLoggedIn(true);
       const db = await initializeEncryptedDatabase(password);
       setDB(db);
       await loadBooksIntoCache(db);
-      setIsLoggedIn(true);
       await startBackgroundImport(db);
       return true;
     }
